@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -112,6 +113,9 @@ export default {
     onTimeDelivery: 'On-Time Delivery',
     itemsCount: '{count} items',
     quantity: 'Qty',
+    submittedOrders: 'Submitted Orders',
+    submittedOrdersDescription: 'Restocking orders placed from this app',
+    leadTimeDays: '{days} days',
     table: {
       orderNumber: 'Order Number',
       orderId: 'Order ID',
@@ -125,7 +129,8 @@ export default {
       totalValue: 'Total Value',
       status: 'Status',
       expectedDelivery: 'Expected Delivery',
-      actualDelivery: 'Actual Delivery'
+      actualDelivery: 'Actual Delivery',
+      leadTime: 'Lead Time'
     }
   },
 
@@ -188,6 +193,52 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    description: 'Plan restock purchases from demand forecasts within your budget',
+    budgetLabel: 'Available Budget',
+    budgetHint: 'Items at or below their reorder point are funded first, then by forecast-to-stock gap',
+    summary: {
+      plannedCost: 'Planned Cost',
+      remaining: 'Remaining Budget',
+      itemsFunded: 'Items Funded',
+      leadTime: 'Max Lead Time'
+    },
+    recommendationsTitle: 'Recommended Restock Items',
+    table: {
+      sku: 'SKU',
+      item: 'Item',
+      warehouse: 'Warehouse',
+      onHand: 'On Hand',
+      reorderPoint: 'Reorder Point',
+      targetStock: 'Target',
+      forecast: 'Forecast (30d)',
+      trend: 'Trend',
+      orderQty: 'Order Qty',
+      unitCost: 'Unit Cost',
+      cost: 'Cost',
+      leadTime: 'Lead Time',
+      funding: 'Funding'
+    },
+    funding: {
+      full: 'Funded',
+      partial: 'Partial',
+      unfunded: 'Over Budget'
+    },
+    belowReorderPoint: 'Below reorder point',
+    unitsOfNeeded: '{funded} of {needed} units',
+    days: '{days} days',
+    placeOrder: 'Place Order',
+    placingOrder: 'Placing Order...',
+    orderSuccess: 'Order {orderNumber} submitted - delivery in {days} days',
+    orderErrorMessage: 'Failed to submit the restocking order. Please try again.',
+    viewInOrders: 'View it in the Orders tab',
+    noRecommendations: 'No forecasted items need restocking right now',
+    increaseBudget: 'Increase the budget to fund recommended items',
+    loadError: 'Failed to load recommendations'
+  },
+
   // Filters
   filters: {
     timePeriod: 'Time Period',
@@ -204,6 +255,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'

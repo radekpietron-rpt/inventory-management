@@ -356,9 +356,14 @@ export default {
       return `$${(revenueGoal.value / 1000).toFixed(0)}K`
     })
 
+    // Restock orders (status 'Submitted', customer 'Internal Restocking') are internal
+    // spending placed from the Restocking view, not customer revenue/demand. Exclude them
+    // here so every revenue- and order-count aggregate below reflects customer orders only.
+    const customerOrders = computed(() => allOrders.value.filter(o => o.status !== 'Submitted'))
+
     const statusData = computed(() => {
       const counts = { delivered: 0, shipped: 0, processing: 0, backordered: 0 }
-      allOrders.value.forEach(order => {
+      customerOrders.value.forEach(order => {
         const status = order.status.toLowerCase()
         if (counts[status] !== undefined) counts[status]++
       })
@@ -366,12 +371,14 @@ export default {
     })
 
     const orderHealthMetrics = computed(() => {
-      const totalOrders = allOrders.value.length
-      const totalValue = allOrders.value.reduce((sum, order) => sum + (order.total_value || 0), 0)
+      // customerOrders excludes internal 'Submitted' restock orders so Revenue,
+      // Avg Order Value, and the donut-center Total reflect customer orders only.
+      const totalOrders = customerOrders.value.length
+      const totalValue = customerOrders.value.reduce((sum, order) => sum + (order.total_value || 0), 0)
       const avgOrderValue = totalOrders > 0 ? totalValue / totalOrders : 0
 
       // Calculate on-time delivery rate (delivered orders that arrived on or before expected date)
-      const deliveredOrders = allOrders.value.filter(o => o.status.toLowerCase() === 'delivered')
+      const deliveredOrders = customerOrders.value.filter(o => o.status.toLowerCase() === 'delivered')
       const onTimeDeliveries = deliveredOrders.filter(o => {
         if (o.actual_delivery && o.expected_delivery) {
           return new Date(o.actual_delivery) <= new Date(o.expected_delivery)
@@ -490,8 +497,9 @@ export default {
       // Calculate top products from filtered order data
       const productMap = {}
 
-      // allOrders is already filtered by API based on: month, warehouse, category, status
-      allOrders.value.forEach(order => {
+      // customerOrders excludes internal 'Submitted' restock orders so revenue/units here
+      // reflect customer demand only. Already filtered by API: month, warehouse, category, status.
+      customerOrders.value.forEach(order => {
         if (order.items) {
           order.items.forEach(item => {
             const sku = item.sku

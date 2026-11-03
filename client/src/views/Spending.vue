@@ -262,14 +262,19 @@ export default {
       }
     })
 
+    // Restock orders (status 'Submitted', customer 'Internal Restocking', order_date in 2026)
+    // are internal spending, not customer revenue. Exclude them before any revenue-type
+    // computation below so KPIs and charts aren't contaminated by restock orders.
+    const customerOrders = computed(() => allOrders.value.filter(order => order.status !== 'Submitted'))
+
     // Filtered orders based on selected period
     const filteredOrders = computed(() => {
       if (selectedPeriod.value === 'all') {
-        return allOrders.value
+        return customerOrders.value
       }
 
       // Filter orders by selected month
-      return allOrders.value.filter(order => {
+      return customerOrders.value.filter(order => {
         const orderMonth = new Date(order.order_date).toISOString().slice(0, 7)
         return orderMonth === selectedPeriod.value
       })
@@ -319,8 +324,10 @@ export default {
         costs: 0
       }))
 
-      // Calculate revenue from orders
-      allOrders.value.forEach(order => {
+      // Calculate revenue from orders (excludes internal 'Submitted' restock orders, which
+      // are dated in 2026 and would otherwise bucket by getMonth() into this chart's
+      // months, mislabeling internal spending as customer revenue)
+      customerOrders.value.forEach(order => {
         const orderDate = new Date(order.order_date)
         const monthIndex = orderDate.getMonth()
         if (monthIndex >= 0 && monthIndex < 12) {

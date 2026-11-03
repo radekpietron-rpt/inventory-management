@@ -27,9 +27,46 @@
         </div>
       </div>
 
+      <div v-if="submittedOrders.length > 0" class="card submitted-orders-card">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">{{ t('orders.submittedOrders') }} ({{ submittedOrders.length }})</h3>
+            <p class="card-subtitle">{{ t('orders.submittedOrdersDescription') }}</p>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ t('orders.table.orderNumber') }}</th>
+                <th>{{ t('orders.table.status') }}</th>
+                <th>{{ t('orders.table.orderDate') }}</th>
+                <th>{{ t('orders.table.items') }}</th>
+                <th>{{ t('orders.table.totalValue') }}</th>
+                <th>{{ t('orders.table.leadTime') }}</th>
+                <th>{{ t('orders.table.expectedDelivery') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in submittedOrders" :key="order.id">
+                <td><strong>{{ order.order_number }}</strong></td>
+                <td>
+                  <span :class="['badge', getOrderStatusClass(order.status)]">{{ t('status.submitted') }}</span>
+                </td>
+                <td>{{ formatDate(order.order_date) }}</td>
+                <td>{{ t('orders.itemsCount', { count: order.items.length }) }}</td>
+                <td><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
+                <td>{{ order.lead_time_days != null ? t('orders.leadTimeDays', { days: order.lead_time_days }) : '-' }}</td>
+                <td>{{ formatDate(order.expected_delivery) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">{{ t('orders.allOrders') }} ({{ orders.length }})</h3>
+          <h3 class="card-title">{{ t('orders.allOrders') }} ({{ mainOrders.length }})</h3>
         </div>
         <div class="table-container">
           <table class="orders-table">
@@ -45,7 +82,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="order in orders" :key="order.id">
+              <tr v-for="order in mainOrders" :key="order.id">
                 <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
                 <td class="col-customer">{{ translateCustomerName(order.customer) }}</td>
                 <td class="col-items">
@@ -129,6 +166,16 @@ export default {
       loadOrders()
     })
 
+    // Internal restocking orders submitted from the Restocking view
+    const submittedOrders = computed(() => {
+      return orders.value.filter(order => order.status === 'Submitted')
+    })
+
+    // All other orders, shown in the main table (Submitted orders have their own section)
+    const mainOrders = computed(() => {
+      return orders.value.filter(order => order.status !== 'Submitted')
+    })
+
     const getOrdersByStatus = (status) => {
       return orders.value.filter(order => order.status === status)
     }
@@ -138,15 +185,19 @@ export default {
         'Delivered': 'success',
         'Shipped': 'info',
         'Processing': 'warning',
-        'Backordered': 'danger'
+        'Backordered': 'danger',
+        'Submitted': 'submitted'
       }
       return statusMap[status] || 'info'
     }
 
     const formatDate = (dateString) => {
+      if (!dateString) return '-'
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return '-'
       const { currentLocale } = useI18n()
       const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-      return new Date(dateString).toLocaleDateString(locale, {
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
@@ -160,6 +211,8 @@ export default {
       loading,
       error,
       orders,
+      submittedOrders,
+      mainOrders,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
@@ -172,6 +225,21 @@ export default {
 </script>
 
 <style scoped>
+.card-subtitle {
+  font-size: 0.813rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.submitted-orders-card {
+  border-left: 4px solid #2563eb;
+}
+
+.badge.submitted {
+  background: #bfdbfe;
+  color: #1e3a8a;
+}
+
 /* Fixed table layout to prevent column shifting */
 .orders-table {
   table-layout: fixed;
