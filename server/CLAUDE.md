@@ -243,6 +243,7 @@ server/
 - ✅ Handle optional parameters gracefully
 - ✅ Keep endpoints focused and simple
 - ✅ Write tests for new endpoints
+- ✅ Always document non-obvious logic changes with comments
 
 ### Debugging
 

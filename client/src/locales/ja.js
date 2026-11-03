@@ -6,6 +6,7 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '在庫補充',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -112,6 +113,9 @@ export default {
     onTimeDelivery: '定時配達',
     itemsCount: '{count}件',
     quantity: '数量',
+    submittedOrders: '送信済み発注',
+    submittedOrdersDescription: 'このアプリから送信された補充発注',
+    leadTimeDays: '{days}日',
     table: {
       orderNumber: '注文番号',
       orderId: '注文ID',
@@ -125,7 +129,8 @@ export default {
       totalValue: '合計金額',
       status: 'ステータス',
       expectedDelivery: '予定配達日',
-      actualDelivery: '実際の配達日'
+      actualDelivery: '実際の配達日',
+      leadTime: 'リードタイム'
     }
   },
 
@@ -188,6 +193,52 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: '在庫補充',
+    description: '需要予測に基づき、予算内で補充発注を計画します',
+    budgetLabel: '利用可能予算',
+    budgetHint: '再注文点以下の品目を優先し、次に予測需要と在庫の差が大きい順に予算を割り当てます',
+    summary: {
+      plannedCost: '計画コスト',
+      remaining: '残予算',
+      itemsFunded: '充当品目数',
+      leadTime: '最長リードタイム'
+    },
+    recommendationsTitle: '推奨補充品目',
+    table: {
+      sku: 'SKU',
+      item: '品目',
+      warehouse: '倉庫',
+      onHand: '在庫数',
+      reorderPoint: '再注文点',
+      targetStock: '目標在庫',
+      forecast: '需要予測(30日)',
+      trend: 'トレンド',
+      orderQty: '発注数量',
+      unitCost: '単価',
+      cost: 'コスト',
+      leadTime: 'リードタイム',
+      funding: '充当状況'
+    },
+    funding: {
+      full: '充当済み',
+      partial: '一部充当',
+      unfunded: '予算超過'
+    },
+    belowReorderPoint: '再注文点以下',
+    unitsOfNeeded: '{needed}個中{funded}個',
+    days: '{days}日',
+    placeOrder: '発注する',
+    placingOrder: '発注中...',
+    orderSuccess: '発注 {orderNumber} を送信しました - 納品まで{days}日',
+    orderErrorMessage: '発注の送信に失敗しました。もう一度お試しください。',
+    viewInOrders: '注文タブで確認できます',
+    noRecommendations: '現在、補充が必要な予測品目はありません',
+    increaseBudget: '推奨品目に充当するには予算を増やしてください',
+    loadError: '推奨の読み込みに失敗しました'
+  },
+
   // Filters
   filters: {
     timePeriod: '期間',
@@ -204,6 +255,7 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    submitted: '送信済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'
@@ -364,6 +416,7 @@ export default {
 
   // Customer Names
   customerNames: {
+    'Internal Restocking': '社内補充',
     'MegaCorp Industries': 'メガコープ工業',
     'Elite Systems Corp': 'エリートシステムズ',
     'Horizon Technologies': 'ホライズン技術',
